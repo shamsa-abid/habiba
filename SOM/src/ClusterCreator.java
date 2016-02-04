@@ -21,10 +21,12 @@ public class ClusterCreator {
 	private List<Integer>cluster4 = new ArrayList<Integer>();
 	private List<Integer>cluster5 = new ArrayList<Integer>();
 	private List<Integer>cluster6 = new ArrayList<Integer>();
+	private List<Integer>neuronsList = new ArrayList<Integer>();      //Method Numbers for initial neurons
 	private List<List<Float>> neurons = new ArrayList<List<Float>>();
-	private List<List<Integer>> clusters = new ArrayList<List<Integer>>();
+	private List<Integer> clusters = new ArrayList<Integer>();
 	
-	public ClusterCreator(int max_Clusters, int cluster_Size, double alpha_Start, double min_Alpha, double decay_Rate, int methodVector_Size){
+	public ClusterCreator(List<Integer> neuronsNumbers, int max_Clusters, int cluster_Size, double alpha_Start, double min_Alpha, double decay_Rate, int methodVector_Size){
+		neuronsList = neuronsNumbers;
 		maxClusters =  max_Clusters;
 		clusterSize = cluster_Size;
 		tVectorLength = cluster_Size;
@@ -34,7 +36,7 @@ public class ClusterCreator {
 		//trainingVectorSize = methodVector_Size;
 		dist = new double[maxClusters];
 		iterations = 0;
-		Random r = new Random();
+		//Random r = new Random();
 		
 	    //default neurons
 		/*for(int i = 0; i <  maxClusters; i++){
@@ -54,7 +56,7 @@ public class ClusterCreator {
 	
 	public void initializeNeurons(List<List<Integer>> methodVector){
 		
-		List<Float> neuron1 = new ArrayList<Float>();
+	/*	List<Float> neuron1 = new ArrayList<Float>();
 		for (Integer n: methodVector.get(0)){
 			neuron1.add(n.floatValue());
 		}
@@ -85,7 +87,14 @@ public class ClusterCreator {
 		neurons.add(neuron3);
 		neurons.add(neuron4);
 		neurons.add(neuron5);
-		neurons.add(neuron6);
+		neurons.add(neuron6);*/
+		for (int i=0; i<neuronsList.size(); i++){
+			List<Float> neuron = new ArrayList<Float>();;
+			for (Integer n: methodVector.get(neuronsList.get(i))){
+				neuron.add(n.floatValue());
+			}
+			neurons.add(neuron);
+		}
 		
 		for (int i=0; i<neurons.size();i++){
     	List<Float> neuron = neurons.get(i);
@@ -124,10 +133,10 @@ public class ClusterCreator {
 	                neuron.set(i,x);	                
 	            }
 	            neurons.set(minDistanceIndex, neuron);
-	            System.out.println("Upated neurons");
+	            /*System.out.println("Upated neurons");
 	            for (int i=0; i<neurons.size(); i++){
 	            	System.out.println("neuron-" + i + ": " + neurons.get(i));
-	            }
+	            }*/
 	        }
 
 	        // Reduce the learning rate.
@@ -150,7 +159,7 @@ public class ClusterCreator {
 	        	//Find nearest neuron
 	            computeDistance(vecNum, method);
 	            minDistanceIndex = computeSmallestDistanceIndex();
-	            System.out.println("Method #: " +vecNum + " clusers with neuron #: " +minDistanceIndex);
+	           // System.out.println("Method #: " +vecNum + " clusers with neuron #: " +minDistanceIndex);
 	            
 	            /********** Have to make this code dynamic,,,,it is static yet  *********/
 	            /************************************************************************/
@@ -183,8 +192,8 @@ public class ClusterCreator {
 	    for(int i = 0; i < maxClusters; i++){	    
 	    	List<Float> neuron = neurons.get(i);
         	
-        	System.out.println("\n\n neuron: " + neuron);
-        	System.out.println("training data: " + trainingData);
+        	//System.out.println("\n\n neuron: " + neuron);
+        	//System.out.println("training data: " + trainingData);
         	
         	//Add up distances of a neuron from a training/method vector
 	        for( j = 0; j < tVectorLength; j++){	        	

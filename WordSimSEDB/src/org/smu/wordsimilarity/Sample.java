@@ -31,6 +31,7 @@ public class Sample {
 		//read in database
 		//String inputFile = "G:/Study/CE work/Semesters-MSCS/Design Patterns Refactoring/Project/Game Project/WordSimSEDB/SEWordSim-r1.db"; //jdbc:sqlite:C:\\test.db
 		String inputFile = System.getProperty("user.dir")+"/SEWordSim-r1.db";
+		
 		WordSimDBFacade facade = new WordSimDBFacade(inputFile);
 		
 		//stem word

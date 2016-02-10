@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+//import java.util.Random;
 
 
 public class ClusterCreator {
@@ -15,15 +15,10 @@ public class ClusterCreator {
 	
 	private double dist[];
 	
-	private List<Integer>cluster1 = new ArrayList<Integer>();
-	private List<Integer>cluster2 = new ArrayList<Integer>();
-	private List<Integer>cluster3 = new ArrayList<Integer>();	
-	private List<Integer>cluster4 = new ArrayList<Integer>();
-	private List<Integer>cluster5 = new ArrayList<Integer>();
-	private List<Integer>cluster6 = new ArrayList<Integer>();
-	private List<Integer>neuronsList = new ArrayList<Integer>();      //Method Numbers for initial neurons
+	
+	private List<Integer>neuronsList = new ArrayList<Integer>();      				//Method Numbers for initial neurons
 	private List<List<Float>> neurons = new ArrayList<List<Float>>();
-	private List<Integer> clusters = new ArrayList<Integer>();
+	private List<List<Integer>> clusters = new ArrayList<List<Integer>>();
 	
 	public ClusterCreator(List<Integer> neuronsNumbers, int max_Clusters, int cluster_Size, double alpha_Start, double min_Alpha, double decay_Rate, int methodVector_Size){
 		neuronsList = neuronsNumbers;
@@ -36,6 +31,7 @@ public class ClusterCreator {
 		//trainingVectorSize = methodVector_Size;
 		dist = new double[maxClusters];
 		iterations = 0;
+		clusters = new ArrayList<List<Integer>>(maxClusters);
 		//Random r = new Random();
 		
 	    //default neurons
@@ -55,39 +51,7 @@ public class ClusterCreator {
 	}
 	
 	public void initializeNeurons(List<List<Integer>> methodVector){
-		
-	/*	List<Float> neuron1 = new ArrayList<Float>();
-		for (Integer n: methodVector.get(0)){
-			neuron1.add(n.floatValue());
-		}
-		
-		List<Float> neuron2 = new ArrayList<Float>();
-		for (Integer n: methodVector.get(1)){
-			neuron2.add(n.floatValue());
-		}
-		
-		List<Float> neuron3 = new ArrayList<Float>();
-		for (Integer n: methodVector.get(3)){
-			neuron3.add(n.floatValue());
-		}
-		List<Float> neuron4 = new ArrayList<Float>();
-		for (Integer n: methodVector.get(4)){
-			neuron4.add(n.floatValue());
-		}
-		List<Float> neuron5 = new ArrayList<Float>();
-		for (Integer n: methodVector.get(5)){
-			neuron5.add(n.floatValue());
-		}
-		List<Float> neuron6 = new ArrayList<Float>();
-		for (Integer n: methodVector.get(10)){
-			neuron6.add(n.floatValue());
-		}
-		neurons.add(neuron1);
-		neurons.add(neuron2);
-		neurons.add(neuron3);
-		neurons.add(neuron4);
-		neurons.add(neuron5);
-		neurons.add(neuron6);*/
+
 		for (int i=0; i<neuronsList.size(); i++){
 			List<Float> neuron = new ArrayList<Float>();;
 			for (Integer n: methodVector.get(neuronsList.get(i))){
@@ -122,7 +86,7 @@ public class ClusterCreator {
 	            
 	            //Find the smallest distant neuron
 	            minDistanceIndex = computeSmallestDistanceIndex();
-	            System.out.println("Method #: " + vecNum + " Closest neuron is: " + minDistanceIndex );
+	            //System.out.println("Method #: " + vecNum + " Closest neuron is: " + minDistanceIndex );
 	            List<Float> neuron = neurons.get(minDistanceIndex);
 	            
 	            
@@ -148,34 +112,40 @@ public class ClusterCreator {
 	
 	public void clusterMethods(List<List<Integer>> methodVector){
 		
-			int minDistanceIndex;		
-
+			int minDistanceIndex;
+			List<Integer> nearestNeuronList = new ArrayList<Integer>(); //List of neuron numbers which is nearest to the method
+			
+						
 			// Print clusters created.
-			System.out.println("Clusters for training input:");
+			//System.out.println("Clusters for training input:");
 			for(int vecNum = 0; vecNum < methodVector.size(); vecNum++)
 	        {
 	        	List<Integer> method = methodVector.get(vecNum);
-	        	
+	        	//List<Integer> methodNumber = new ArrayList<Integer>();
 	        	//Find nearest neuron
 	            computeDistance(vecNum, method);
-	            minDistanceIndex = computeSmallestDistanceIndex();
-	           // System.out.println("Method #: " +vecNum + " clusers with neuron #: " +minDistanceIndex);
 	            
-	            /********** Have to make this code dynamic,,,,it is static yet  *********/
-	            /************************************************************************/
-	            if(minDistanceIndex == 0)
-	            	cluster1.add(vecNum);
-	            else if(minDistanceIndex == 1)
-	            	cluster2.add(vecNum);
-	            else if(minDistanceIndex ==2)
-	            	cluster3.add(vecNum);	
-	            else if(minDistanceIndex == 3)
-	            	cluster4.add(vecNum);
-	            else if(minDistanceIndex ==4)
-	            	cluster5.add(vecNum);
-	            else if(minDistanceIndex ==5)
-	            	cluster6.add(vecNum);	
+	            //Find the index of the nearest neuron
+	            minDistanceIndex = computeSmallestDistanceIndex();
+	            System.out.println("Method # "+ vecNum + " clusters with neuron # "+ minDistanceIndex);
+	            
+	            //Place the found index number in the arraylist
+	            nearestNeuronList.add(minDistanceIndex);
+	            
+	           // methodNumber.add(vecNum);
+	           
 	        }
+			System.out.println("Nearest neurons list: " + nearestNeuronList);
+			for (int i=0; i<maxClusters; i++){
+				List<Integer> methodsIndices = new ArrayList<Integer>();
+				for (int j=0;j<nearestNeuronList.size(); j++){
+					if (i==nearestNeuronList.get(j)){
+						methodsIndices.add(j);
+					}
+				}
+				clusters.add(i, methodsIndices);
+				System.out.println("Cluster # " + i + " has methods: " + clusters.get(i));
+			}
 		    
 		    return;		
 	}
@@ -201,10 +171,10 @@ public class ClusterCreator {
 	        } // j
 	    } // i
 	    
-	    for(int i=0; i<dist.length; i++){
+	    /*for(int i=0; i<dist.length; i++){
 	    	System.out.print("D= " + i + ": "+  dist[i] + "\t");
 	    }
-    	System.out.println();
+    	System.out.println();*/
 	    return;
 	}
 	
@@ -231,13 +201,14 @@ public class ClusterCreator {
 		}
 	//Displays resultant clusters
 	public void displayClusters(){
-		System.out.println("Cluster#1: " + cluster1);
-		System.out.println("Cluster#2: " + cluster2);
-		System.out.println("Cluster#3: " + cluster3);
-		System.out.println("Cluster#4: " + cluster4);
-		System.out.println("Cluster#5: " + cluster5);
-		System.out.println("Cluster#6: " + cluster6);
+		for (int i=0; i<clusters.size(); i++){
+			System.out.println("Cluster# " + i + ": " + clusters.get(i));
+		}
+			
 		
+	}
+	public List<List<Integer>> getNeurons(){
+		return clusters;
 	}
 	
 }

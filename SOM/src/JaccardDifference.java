@@ -10,9 +10,9 @@ public class JaccardDifference {
 	
 	List<List<String>> methodsTags = new ArrayList<List<String>>();
 	int totalMethods; 
-	double dist[][];  		//Distance of each method with the rest 
-	//int minDist []; = new int[totalMethods];				   //index of closest cluster
-	int[] maxDist; 		// index of farthest cluster
+	double dist[][];  										 //Distance of each method with the rest 
+	int[] minDist;	 										//index of closest cluster
+	int[] maxDist; 											// index of farthest cluster
 	static List<Integer> neurons= new ArrayList<Integer>();
 
 	public JaccardDifference(List<List<String>> tagsList){
@@ -20,10 +20,11 @@ public class JaccardDifference {
 		totalMethods = methodsTags.size();
 		dist = new double[totalMethods][totalMethods];
 		maxDist = new int[totalMethods];
-		createDistanceMatrix(dist, methodsTags, maxDist);
+		minDist = new int[totalMethods];
+		createDistanceMatrix(dist, methodsTags, maxDist, minDist);
 	}
 	
-	public static void createDistanceMatrix(double d[][], List<List<String>> list, int maxD[] ){
+	public static void createDistanceMatrix(double d[][], List<List<String>> list, int maxD[], int minD[] ){
 		for (int i=0; i<d.length; i++){
 			for (int j=0; j<d[i].length; j++){
 				if (i==j) d[i][j]=2.0;
@@ -31,6 +32,8 @@ public class JaccardDifference {
 				else {
 					d[i][j] = calculateJaccardDifference(list.get(i), list.get(j));
 				}
+				if (d[i][j]<d[i][minD[i]] && d[i][j]!=2)
+					minD[i] = j;
 				//Maintain  index of farthest cluster
 				
 				if (d[i][j]>d[i][maxD[i]] && i!=j)
@@ -38,9 +41,12 @@ public class JaccardDifference {
 				else if (i==0 && j==0) maxD[i] = 1;  
 			}
 		}
+		
 		//neurons = new ArrayList<Integer>(Arrays.asList(maxD));
 		for (int i=0; i<maxD.length; i++){
-			neurons.add(maxD[i]);
+			if (maxD[i]>=1.0){
+				neurons.add(maxD[i]);
+			}
 		}
 		System.out.println("\nNeurons list with duplication: " + neurons);
 		
@@ -62,6 +68,11 @@ public class JaccardDifference {
 		System.out.println();
 		for(int i=0; i<maxD.length; i++){
 			System.out.println("max distant node of  node " +i+": "+ maxD[i]);
+		}
+		
+		System.out.println();
+		for(int i=0; i<minD.length; i++){
+			System.out.println("min distant node of  node " +i+": "+ minD[i]);
 		}
 	}
 	 

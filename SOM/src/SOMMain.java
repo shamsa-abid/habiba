@@ -43,8 +43,8 @@ public class SOMMain {
 		
 		 clusters.initializeNeurons(methodsVector);
 		 clusters.trainNeurons(methodsVector);
-		 		 
 		 clusters.clusterMethods(methodsVector);
+		 
 		 System.out.println("Feature Vector Size: " + featureVector.size() );
 		 System.out.println("Total epochs: " + clusters.getIterations());
 		 System.out.println("Final value of learning factor: " + clusters.getAlpha());
